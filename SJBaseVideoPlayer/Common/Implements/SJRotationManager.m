@@ -37,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL isFullscreen;
 @property (nonatomic, readonly, getter=isRotating) BOOL rotating;
 @property (nonatomic) BOOL disableAnimations;
+@property (nonatomic, assign)int index;
 @end
 
 @implementation SJFullscreenModeViewController
@@ -92,8 +93,13 @@ NS_ASSUME_NONNULL_BEGIN
         if ( isFullscreen )
             self.delegate.target.frame = CGRectMake(0, 0, size.width, size.height);
         else
-            self.delegate.target.frame = self.delegate.targetOriginFrame;
-        
+            if (self.index == 0) {
+                UIWindow *window = [UIApplication sharedApplication].keyWindow;
+                self.delegate.target.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
+                self.index++;
+            }else {
+                self.delegate.target.frame = self.delegate.targetOriginFrame;
+            }
         [self.delegate.target layoutIfNeeded];
     } completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
         [CATransaction commit];
